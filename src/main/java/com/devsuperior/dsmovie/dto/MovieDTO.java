@@ -68,4 +68,8 @@ public class MovieDTO {
 	public void setImage(String image) {
 		this.image = image;
 	}
+
+	public Movie toEntity() {
+		return new Movie(id, title, score, count, image);
+	}
 }
