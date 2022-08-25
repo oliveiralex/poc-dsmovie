@@ -1,15 +1,32 @@
 package com.devsuperior.dsmovie.dto;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+
 import com.devsuperior.dsmovie.entities.Movie;
+
+import io.swagger.annotations.ApiModelProperty;
 
 public class MovieDTO {
 
+	@ApiModelProperty(notes = "Database generated movie ID")
 	private Long id;
+
+	@ApiModelProperty(notes = "Movie title")
+	@NotEmpty(message = "can't be empty")
+	@Size(min = 3, max = 50, message = "Length must be between 3 and 50")
 	private String title;
+
+	@PositiveOrZero
+	@Min(value = 0, message = "Score should not be less than 0")
+	@Max(value = 5, message = "Score should not be greater than 5")
 	private Double score;
 	private Integer count;
 	private String image;
-	
+
 	public MovieDTO() {
 	}
 
@@ -20,7 +37,7 @@ public class MovieDTO {
 		this.count = count;
 		this.image = image;
 	}
-	
+
 	public MovieDTO(Movie movie) {
 		id = movie.getId();
 		title = movie.getTitle();

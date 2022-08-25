@@ -1,8 +1,14 @@
 package com.devsuperior.dsmovie.dto;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 public class ScoreDTO {
 
 	private Long movieId;
+	
+	@NotBlank
+	@Email
 	private String email;
 	private Double score;
 	
