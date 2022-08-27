@@ -25,9 +25,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    public static final String AUTH_SERVER = "http://localhost:8080/spring-security-oauth-server/oauth";
-    public static final String CLIENT_ID = "maria@gmail.com";
-    public static final String CLIENT_SECRET = "123456";
+    public static final String AUTH_SERVER = "http://localhost:8080/oauth";
+    public static final String CLIENT_ID = "myclientid";
+    public static final String CLIENT_SECRET = "myclientsecret";
 
     @Bean
     public Docket api() {
@@ -38,7 +38,7 @@ public class SwaggerConfig {
         		.securitySchemes(Arrays.asList(securityScheme()))
         		.securityContexts(Arrays.asList(securityContext()));
     }
-
+    
     @Bean
     public SecurityConfiguration security() {
         return SecurityConfigurationBuilder.builder()
@@ -62,20 +62,19 @@ public class SwaggerConfig {
         		.build();
         return oauth;
     }
-
+    
     private SecurityContext securityContext() {
         return SecurityContext.builder()
         		.securityReferences(
         		  Arrays.asList(new SecurityReference("spring_oauth", scopes())))
-        		.forPaths(PathSelectors.regex("/foos.*"))
+        		.forPaths(PathSelectors.regex("/movies.*"))
         		.build();
     }
 
     private AuthorizationScope[] scopes() {
         AuthorizationScope[] scopes = { 
           new AuthorizationScope("read", "for read operations"), 
-          new AuthorizationScope("write", "for write operations"), 
-          new AuthorizationScope("foo", "Access foo API") };
+          new AuthorizationScope("write", "for write operations") };
         return scopes;
     }
 }

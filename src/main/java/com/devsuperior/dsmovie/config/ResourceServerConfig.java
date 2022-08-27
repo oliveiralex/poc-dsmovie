@@ -33,7 +33,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Autowired
 	private JwtTokenStore tokenStore;
 	
-	private static final String[] PUBLIC = { "/oauth/token", "/h2-console/**", "/swagger*" };
+	private static final String[] PUBLIC = { 
+			"/oauth/token", 
+			"/h2-console/**", 
+			"/swagger*",
+			"/v2/**",
+			"/webjars/**"
+	};
 	
 	private static final String[] ALL_USERS_GET = { "/movies/**" };
 
@@ -54,6 +60,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		
 		http.authorizeRequests()
 		.antMatchers(PUBLIC).permitAll()
+		.antMatchers("/login", "/oauth/authorize").permitAll()
 		.antMatchers(HttpMethod.GET, ALL_USERS_GET).permitAll()
 		.antMatchers(HttpMethod.PUT, ALL_USERS_PUT).permitAll()
 		.anyRequest().hasAnyRole("ADMIN");
