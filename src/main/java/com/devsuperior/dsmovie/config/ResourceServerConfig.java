@@ -11,6 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
@@ -32,15 +33,21 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	
 	@Autowired
 	private JwtTokenStore tokenStore;
-	
+
 	private static final String[] PUBLIC = { 
 			"/oauth/token", 
-			"/h2-console/**", 
-			"/swagger*",
-			"/v2/**",
-			"/webjars/**"
+			"/h2-console/**"
 	};
 	
+	private static final String[] SWAGGER = {	
+		"/v2/api-docs",
+		"/configuration/ui",
+		"/swagger-resources/**",
+		"/configuration/security",
+		"/swagger-ui.html",
+		"/webjars/**"
+	};
+
 	private static final String[] ALL_USERS_GET = { "/movies/**" };
 
 	private static final String[] ALL_USERS_PUT = { "/scores/**" };
@@ -49,6 +56,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 		resources.tokenStore(tokenStore);
 	}
+	
+	public void configure(WebSecurity web) throws Exception {
+        web.ignoring().mvcMatchers(HttpMethod.OPTIONS, "/**");
+        // ignore swagger 
+        web.ignoring().mvcMatchers(SWAGGER);
+    }
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
@@ -60,7 +73,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		
 		http.authorizeRequests()
 		.antMatchers(PUBLIC).permitAll()
-		.antMatchers("/login", "/oauth/authorize").permitAll()
+		.antMatchers(SWAGGER).permitAll()
 		.antMatchers(HttpMethod.GET, ALL_USERS_GET).permitAll()
 		.antMatchers(HttpMethod.PUT, ALL_USERS_PUT).permitAll()
 		.anyRequest().hasAnyRole("ADMIN");
