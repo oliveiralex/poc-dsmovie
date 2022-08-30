@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RestController;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -26,11 +27,11 @@ public class SwaggerConfig {
 		return new ApiKey("JWT", AUTHORIZATION_HEADER, "header");
 	}
 	
-	private List<SecurityContext> securityContexts() {
-		return Arrays.asList(SecurityContext.builder().securityReferences(sf()).build());
+	private List<SecurityContext> securityContext() {
+		return Arrays.asList(SecurityContext.builder().securityReferences(securityReference()).build());
 	}
-	
-	private List<SecurityReference> sf() {
+
+	private List<SecurityReference> securityReference() {
 		AuthorizationScope scope = new AuthorizationScope("global", "accessEverything");
 		return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[] { scope }));
 	}
@@ -38,10 +39,10 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-        		.securityContexts(securityContexts())
+        		.securityContexts(securityContext())
         		.securitySchemes(Arrays.asList(apiKeys()))
         		.select()
-        		.apis(RequestHandlerSelectors.any())
+        		.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
         		.paths(PathSelectors.any())
         		.build();
     }
